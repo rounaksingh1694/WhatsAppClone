@@ -1,0 +1,13 @@
+.auth {
+	place-items: center;
+}
+
+.auth_input_section {
+	width: 100vh;
+	height: 100vh;
+	place-items: center;
+}
+
+.auth_input_section > input {
+	flex: 1;
+}
