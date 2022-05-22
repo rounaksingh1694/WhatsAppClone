@@ -21,25 +21,25 @@ const SidebarChat = ({ user, onChatClick }) => {
 					if (chat.with == user._id) {
 						console.log("FOUND CHAT");
 						const chatId = chat.chat;
-						// axios
-						// 	.post(
-						// 		`${requests.chat.last}/${cookies.userData.user._id}`,
-						// 		{
-						// 			from: cookies.userData.user._id,
-						// 			to: user._id,
-						// 			chatId: chatId,
-						// 		},
-						// 		{
-						// 			headers: {
-						// 				Authorization: `Bearer ${cookies.userData.accessToken}`,
-						// 			},
-						// 		}
-						// 	)
-						// 	.then((res) => res.data)
-						// 	.then((data) => {
-						// 		console.log("LAST MESSAGE", data);
-						// 		setLastMessage(data.chat.lastMessage.message);
-						// 	});
+						axios
+							.post(
+								`${requests.chat.last}/${cookies.userData.user._id}`,
+								{
+									from: cookies.userData.user._id,
+									to: user._id,
+									chatId: chatId,
+								},
+								{
+									headers: {
+										Authorization: `Bearer ${cookies.userData.accessToken}`,
+									},
+								}
+							)
+							.then((res) => res.data)
+							.then((data) => {
+								console.log("LAST MESSAGE", data);
+								setLastMessage(data.chat.lastMessage);
+							});
 					}
 				});
 			}
@@ -52,7 +52,11 @@ const SidebarChat = ({ user, onChatClick }) => {
 			<Avatar src={user.profilePhoto} />
 			<div className="sidebar_chat_info">
 				<h3>{user.name}</h3>
-				<p>{lastMessage}</p>
+				<p>
+					{lastMessage.from == cookies.userData.user._id
+						? "You: " + lastMessage.message
+						: lastMessage.message}
+				</p>
 			</div>
 		</div>
 	);

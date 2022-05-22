@@ -14,7 +14,7 @@ import { useCookies } from "react-cookie";
 import Pusher from "pusher-js";
 import { io } from "socket.io-client";
 
-const socket = io.connect("http://localhost:8000");
+const socket = io.connect("https://api-chat-backend.herokuapp.com/");
 
 const Chat = ({ user }) => {
 	var [messages, setMessages] = useState([]);
@@ -28,37 +28,11 @@ const Chat = ({ user }) => {
 		messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
 	};
 
-	const listenToPusher = (pusherChatId) => {
-		// const pusher = new Pusher("3f189e635e4d79430b92", {
-		// 	cluster: "ap2",
-		// });
-
-		// console.log("ENTERED PUSHER IF");
-		// const channel = pusher.subscribe(pusherChatId);
-
-		// channel.bind("new", function (data) {
-		// 	console.log("PUSHER CALL", puseherCall + 1);
-		// 	setPushercall(puseherCall + 1);
-		// 	setChatId(data.chatId);
-		// 	const newMessages = messages;
-		// 	newMessages.push(data.message);
-		// 	setMessages(messages.concat([data.message]));
-		// 	console.log("NEW MESSAGES", messages);
-		// 	console.log("MESSAGES", messages);
-		// 	console.log("PUSHER DATA", JSON.stringify(data));
-		// });
-
-		// console.log("OUSHER CHAT ID", pusherChatId);
-
-		socket.on(pusherChatId, (data) => {
+	const listenToSocket = (socketChatId) => {
+		socket.on(socketChatId, (data) => {
 			console.log("DATA", data);
 			setMessages((msgs) => [...msgs, data.message]);
 		});
-
-		// return () => {
-		// 	channel.unbind_all();
-		// 	channel.unsubscribe();
-		// };
 	};
 
 	useEffect(() => {
@@ -75,7 +49,7 @@ const Chat = ({ user }) => {
 				cookies.userData.user.chats.map((chat) => {
 					if (chat.with == user._id) {
 						console.log("FOUND CHAT");
-						listenToPusher(chat.chat);
+						listenToSocket(chat.chat);
 						setChatId(chat.chat);
 						axios
 							.post(
@@ -142,7 +116,7 @@ const Chat = ({ user }) => {
 					} else {
 						userC.chats = [{ chat: data._id, with: user._id }];
 					}
-					listenToPusher(data._id);
+					listenToSocket(data._id);
 					setCookie(
 						"userData",
 						{ accessToken: ck.accessToken, user: userC },
